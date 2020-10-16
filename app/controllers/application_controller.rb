@@ -4,9 +4,8 @@ class ApplicationController < ActionController::API
   protected
   def authenticate_request
     unless user_id_in_token?
-      render json: { errors: ['Not Authenticated'] }, status: :unathorized and return
+      render json: { errors: ['Not Authenticated'] }, status: :unauthorized and return
     end
-    @current_user = User.find_by(id: auth_token[:user_id])
   end
 
   private
@@ -25,6 +24,6 @@ class ApplicationController < ActionController::API
   end
 
   def user_id_in_token?
-    http_token && auth_token && auth_token[:user_id].to_i
+    http_token && auth_token && auth_token.first.with_indifferent_access[:user_id].to_i
   end
 end
